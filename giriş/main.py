@@ -1,0 +1,195 @@
+from ast import Index
+import enum
+import sys 
+from PyQt5 import QtWidgets
+from PyQt5.QtWidgets import *
+from kayitsf import *
+from anasayfa import *
+from anamenu import *
+from sifremiunuttum import *
+
+
+
+
+#----------------------------------------------
+
+uygulama= QApplication(sys.argv)
+anaPencere= QMainWindow()
+uiAnaPencere= Ui_MainWindow()
+uiAnaPencere.setupUi(anaPencere)
+
+kayitEkrani= QMainWindow()
+uiKayitEkrani= Ui_kayitWindow()
+uiKayitEkrani.setupUi(kayitEkrani)
+
+sifremiUnuttumEkrani= QMainWindow()
+uiSifremiUnuttumEkrani= Ui_SifremiUnuttum()
+uiSifremiUnuttumEkrani.setupUi(sifremiUnuttumEkrani)
+
+menuEkrani= QMainWindow()
+uiMenuEkrani= Ui_AnaMenu()
+uiMenuEkrani.setupUi(menuEkrani)
+
+anaPencere.show()
+
+
+#SQL
+#------------------------------------------------
+
+import pypyodbc as odbc
+
+DRIVER_NAME= 'SQL SERVER'
+SERVER_NAME= 'DESKTOP-T0FR0CM'
+DATABASE_NAME= 'kelime oyunu'
+
+connection_string= f"""
+    DRIVER={{{DRIVER_NAME}}};
+    SERVER={SERVER_NAME};
+    DATABASE={DATABASE_NAME};
+    Trust_Connection=yes;
+"""
+baglanti = odbc.connect(connection_string)
+islem=baglanti.cursor()
+baglanti.commit()
+
+#KAYIT KISMI---------------------------------------------------
+#METODLAR
+#----------------------------------------------
+def kayit_ol():
+    kayitEkrani.show()
+    anaPencere.close()
+
+
+
+    #METODLAR
+    #-------------------------------------------------
+    def kayit_ekle():
+        kullaniciAdi=uiKayitEkrani.kayitKullaniciAdiLne.text()
+        sifre=uiKayitEkrani.kayitSifreLne.text()
+        eposta=uiKayitEkrani.kayitEpostaLne.text()
+        
+
+        if kullaniciAdi== "":
+                uiKayitEkrani.statusbar.showMessage("Lütfen Kullanici Adi Giriniz !",10000)
+        else :
+            if sifre=="":
+                uiKayitEkrani.statusbar.showMessage("Lütfen Sifre Giriniz !",10000)
+            else: 
+                if eposta=="":
+                    uiKayitEkrani.statusbar.showMessage("Lütfen Sifre Giriniz !",10000)
+                else:
+                    islem.execute(f"SELECT kullaniciAdi FROM tblKullanici WHERE kullaniciAdi='{kullaniciAdi}'")
+                    kullaniciAdiMevcutMu=islem.fetchone()
+                    baglanti.commit
+                    
+                    if kullaniciAdiMevcutMu is None:
+                        try:
+                            ekle="insert into dbo.tblKullanici(kullaniciAdi,sifre,eposta) values(?,?,?)"
+                            islem.execute(ekle,(kullaniciAdi,sifre,eposta))
+                            baglanti.commit()
+                            uiKayitEkrani.statusbar.showMessage("Kayit Eklendi !",10000)
+                            anaPencere.show()
+                            kayitEkrani.hide()
+                        except:
+                            uiKayitEkrani.statusbar.showMessage("Kayit Eklenemedi.",10000)
+                    else :
+                        uiKayitEkrani.statusbar.showMessage("Bu Kullanici Adi Kullanilmaktadir.",10000)
+                    
+                    
+    #BUTONLAR
+    #-------------------------------------------------
+
+    uiKayitEkrani.kayitEkleBtn.clicked.connect(kayit_ekle)
+    uiKayitEkrani.zatenKayitliyimBtn.clicked.connect(anaPencere.show)
+    uiKayitEkrani.zatenKayitliyimBtn.clicked.connect(kayitEkrani.close)
+
+
+
+
+
+
+
+#GİRİS KISMI
+#def
+#------------------------------------------------------
+def giris_yap():
+    
+    kullaniciAdi=uiAnaPencere.kullaniciAdiLne.text()
+    sifre=uiAnaPencere.sifreLne.text()
+    if kullaniciAdi== "":
+        uiAnaPencere.statusbar.showMessage("Lütfen Kullanici Adi Giriniz !",10000)
+    else :
+        if sifre=="":
+            uiAnaPencere.statusbar.showMessage("Lütfen Sifre Giriniz !",10000)
+        else:
+            islem.execute(f"SELECT kullaniciAdi FROM tblKullanici WHERE kullaniciAdi='{kullaniciAdi}'")
+            kullaniciAdiMevcutMu=islem.fetchone()
+
+            baglanti.commit()
+            
+            if kullaniciAdiMevcutMu is None :
+                uiAnaPencere.statusbar.showMessage("Kullanici Adi Bulunmamaktadir !",10000)
+            else:
+                islem.execute(f"SELECT * FROM tblKullanici WHERE kullaniciAdi='{kullaniciAdi}' and sifre='{sifre}'")
+                sifreMevcutMu=islem.fetchone()
+                baglanti.commit()
+                if sifreMevcutMu is None :
+                    uiAnaPencere.statusbar.showMessage("Sifre Yanlis !",10000)
+                    
+                else : 
+                    menuEkrani.show()
+                    anaPencere.close()
+
+#ANAMENÜ KISMI
+#--------------------------------------------------
+
+#METODLAR
+#--------------------------------------------------
+def quize_basla():
+    print("quize basla")
+
+
+def kelime_ekle():
+    print("kelime ekkle")
+
+def ayarlar():
+    print("ayarlar")
+
+#BUTONLAR
+#-----------------------------------------------
+
+
+uiMenuEkrani.cikisBtn.clicked.connect(menuEkrani.close)
+uiMenuEkrani.quizBtn.clicked.connect(quize_basla)
+uiMenuEkrani.keliimeEkleBtn.clicked.connect(kelime_ekle)
+uiMenuEkrani.ayarlarBtn.clicked.connect(ayarlar)
+
+
+
+
+
+#SİFRE DEĞİŞTİRME KISMI
+#-------------------------------------------------
+def sifre_degis():
+    sifremiUnuttumEkrani.show()
+    anaPencere.close()
+
+
+    
+
+
+    
+#BUTONLAR
+#------------------------------------------------
+
+uiAnaPencere.kayitBtn.clicked.connect(kayit_ol)
+uiAnaPencere.girisBtn.clicked.connect(giris_yap)
+uiAnaPencere.sifremiUnuttumBtn.clicked.connect(sifre_degis)
+
+
+
+
+
+
+#---------------------------------------------------------------------------------------------------------------------
+sys.exit(uygulama.exec_())
