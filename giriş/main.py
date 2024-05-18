@@ -44,12 +44,11 @@ anaPencere.show()
 import pypyodbc as odbc
 
 DRIVER_NAME= 'SQL SERVER'
-SERVER_NAME= 'DESKTOP-T0FR0CM'
 DATABASE_NAME= 'kelime oyunu'
 
 connection_string= f"""
     DRIVER={{{DRIVER_NAME}}};
-    SERVER={SERVER_NAME};
+    SERVER=.;
     DATABASE={DATABASE_NAME};
     Trust_Connection=yes;
 """
@@ -74,15 +73,15 @@ def kayit_ol():
         eposta=uiKayitEkrani.kayitEpostaLne.text()
         
 
-        if kullaniciAdi== "":
+        if kullaniciAdi!= "":
                 
-            if sifre=="":
-                if eposta=="":
+            if sifre!="":
+                if eposta!="":
                     islem.execute(f"SELECT kullaniciAdi FROM tblKullanici WHERE kullaniciAdi='{kullaniciAdi}'")
                     kullaniciAdiMevcutMu=islem.fetchone()
                     baglanti.commit
                     
-                    if kullaniciAdiMevcutMu is None:
+                    if kullaniciAdiMevcutMu is not None:
                         try:
                             ekle="insert into dbo.tblKullanici(kullaniciAdi,sifre,eposta) values(?,?,?)"
                             islem.execute(ekle,(kullaniciAdi,sifre,eposta))
@@ -125,18 +124,18 @@ def giris_yap():
     
     kullaniciAdi=uiAnaPencere.kullaniciAdiLne.text()
     sifre=uiAnaPencere.sifreLne.text()
-    if kullaniciAdi== "":
-        if sifre=="":
+    if kullaniciAdi!= "":
+        if sifre!="":
             islem.execute(f"SELECT kullaniciAdi FROM tblKullanici WHERE kullaniciAdi='{kullaniciAdi}'")
             kullaniciAdiMevcutMu=islem.fetchone()
 
             baglanti.commit()
             
-            if kullaniciAdiMevcutMu is None :
+            if kullaniciAdiMevcutMu is not None :
                 islem.execute(f"SELECT * FROM tblKullanici WHERE kullaniciAdi='{kullaniciAdi}' and sifre='{sifre}'")
                 sifreMevcutMu=islem.fetchone()
                 baglanti.commit()
-                if sifreMevcutMu is None :
+                if sifreMevcutMu is not None :
                     menuEkrani.show()
                     anaPencere.close()
                 else : 
