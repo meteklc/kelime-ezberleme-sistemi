@@ -41,6 +41,7 @@ class Ui_MainWindow(object):
         self.kullaniciAdiLne.setObjectName("kullaniciAdiLne")
         self.verticalLayout_2.addWidget(self.kullaniciAdiLne)
         self.sifreLne = QtWidgets.QLineEdit(self.layoutWidget)
+        self.sifreLne.setEchoMode(QtWidgets.QLineEdit.Password)
         self.sifreLne.setObjectName("sifreLne")
         self.verticalLayout_2.addWidget(self.sifreLne)
         self.horizontalLayout_2.addLayout(self.verticalLayout_2)

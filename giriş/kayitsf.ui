@@ -69,12 +69,15 @@
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <widget class="QPushButton" name="pushButton_2">
+        <widget class="QPushButton" name="geriDonBtn">
          <property name="text">
-          <string>Zaten Hesabım Var</string>
+          <string>Geri Dön</string>
+         </property>
+         <property name="autoDefault">
+          <bool>true</bool>
          </property>
          <property name="flat">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>

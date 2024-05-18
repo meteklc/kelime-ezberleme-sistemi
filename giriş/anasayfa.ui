@@ -53,7 +53,11 @@
           <widget class="QLineEdit" name="kullaniciAdiLne"/>
          </item>
          <item>
-          <widget class="QLineEdit" name="sifreLne"/>
+          <widget class="QLineEdit" name="sifreLne">
+           <property name="echoMode">
+            <enum>QLineEdit::Password</enum>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>
@@ -78,7 +82,7 @@
       </layout>
      </item>
      <item>
-      <widget class="QPushButton" name="sifrem">
+      <widget class="QPushButton" name="sifremiUnuttumBtn">
        <property name="autoFillBackground">
         <bool>false</bool>
        </property>

@@ -7,6 +7,7 @@ from kayitsf import *
 from anasayfa import *
 from anamenu import *
 from sifremiunuttum import *
+from kelimeEkle import *
 
 
 
@@ -29,6 +30,10 @@ uiSifremiUnuttumEkrani.setupUi(sifremiUnuttumEkrani)
 menuEkrani= QMainWindow()
 uiMenuEkrani= Ui_AnaMenu()
 uiMenuEkrani.setupUi(menuEkrani)
+
+kelimeEklemeEkrani= QMainWindow()
+uikelimeEklemeEkrani= Ui_KelimeEkleme()
+uikelimeEklemeEkrani.setupUi(kelimeEklemeEkrani)
 
 anaPencere.show()
 
@@ -88,8 +93,6 @@ def kayit_ol():
                             islem.execute(ekle,(kullaniciAdi,sifre,eposta))
                             baglanti.commit()
                             uiKayitEkrani.statusbar.showMessage("Kayit Eklendi !",10000)
-                            anaPencere.show()
-                            kayitEkrani.hide()
                         except:
                             uiKayitEkrani.statusbar.showMessage("Kayit Eklenemedi.",10000)
                     else :
@@ -100,8 +103,10 @@ def kayit_ol():
     #-------------------------------------------------
 
     uiKayitEkrani.kayitEkleBtn.clicked.connect(kayit_ekle)
-    uiKayitEkrani.zatenKayitliyimBtn.clicked.connect(anaPencere.show)
-    uiKayitEkrani.zatenKayitliyimBtn.clicked.connect(kayitEkrani.close)
+    uiKayitEkrani.geriDonBtn.clicked.connect(anaPencere.show)
+    uiKayitEkrani.geriDonBtn.clicked.connect(kayitEkrani.close)
+
+
 
 
 
@@ -149,8 +154,19 @@ def quize_basla():
     print("quize basla")
 
 
-def kelime_ekle():
-    print("kelime ekkle")
+def kelime_ekleme():
+    kelimeEklemeEkrani.show()
+    menuEkrani.close()
+
+    
+    def kelime_ekle():
+        print("kelime ekle")
+
+    uikelimeEklemeEkrani.kelimeEkleBtn.clicked.connect(kelime_ekle)
+    uikelimeEklemeEkrani.geriDonBtn.clicked.connect(menuEkrani.show)
+    uikelimeEklemeEkrani.geriDonBtn.clicked.connect(kelimeEklemeEkrani.close)
+
+
 
 def ayarlar():
     print("ayarlar")
@@ -158,10 +174,10 @@ def ayarlar():
 #BUTONLAR
 #-----------------------------------------------
 
-
+uiMenuEkrani.cikisBtn.clicked.connect(anaPencere.show)
 uiMenuEkrani.cikisBtn.clicked.connect(menuEkrani.close)
 uiMenuEkrani.quizBtn.clicked.connect(quize_basla)
-uiMenuEkrani.keliimeEkleBtn.clicked.connect(kelime_ekle)
+uiMenuEkrani.keliimeEkleBtn.clicked.connect(kelime_ekleme)
 uiMenuEkrani.ayarlarBtn.clicked.connect(ayarlar)
 
 
@@ -173,9 +189,10 @@ uiMenuEkrani.ayarlarBtn.clicked.connect(ayarlar)
 def sifre_degis():
     sifremiUnuttumEkrani.show()
     anaPencere.close()
+    uiSifremiUnuttumEkrani.geriDonBtn.clicked.connect(anaPencere.show)
+    uiSifremiUnuttumEkrani.geriDonBtn.clicked.connect(sifremiUnuttumEkrani.close)
 
 
-    
 
 
     
