@@ -75,14 +75,9 @@ def kayit_ol():
         
 
         if kullaniciAdi== "":
-                uiKayitEkrani.statusbar.showMessage("Lütfen Kullanici Adi Giriniz !",10000)
-        else :
+                
             if sifre=="":
-                uiKayitEkrani.statusbar.showMessage("Lütfen Sifre Giriniz !",10000)
-            else: 
                 if eposta=="":
-                    uiKayitEkrani.statusbar.showMessage("Lütfen Sifre Giriniz !",10000)
-                else:
                     islem.execute(f"SELECT kullaniciAdi FROM tblKullanici WHERE kullaniciAdi='{kullaniciAdi}'")
                     kullaniciAdiMevcutMu=islem.fetchone()
                     baglanti.commit
@@ -97,6 +92,15 @@ def kayit_ol():
                             uiKayitEkrani.statusbar.showMessage("Kayit Eklenemedi.",10000)
                     else :
                         uiKayitEkrani.statusbar.showMessage("Bu Kullanici Adi Kullanilmaktadir.",10000)
+                    
+                else:
+                    uiKayitEkrani.statusbar.showMessage("Lütfen Sifre Giriniz !",10000)
+            else: 
+                
+                uiKayitEkrani.statusbar.showMessage("Lütfen Sifre Giriniz !",10000)
+                        
+        else :
+            uiKayitEkrani.statusbar.showMessage("Lütfen Kullanici Adi Giriniz !",10000)
                     
                     
     #BUTONLAR
@@ -122,28 +126,30 @@ def giris_yap():
     kullaniciAdi=uiAnaPencere.kullaniciAdiLne.text()
     sifre=uiAnaPencere.sifreLne.text()
     if kullaniciAdi== "":
-        uiAnaPencere.statusbar.showMessage("Lütfen Kullanici Adi Giriniz !",10000)
-    else :
         if sifre=="":
-            uiAnaPencere.statusbar.showMessage("Lütfen Sifre Giriniz !",10000)
-        else:
             islem.execute(f"SELECT kullaniciAdi FROM tblKullanici WHERE kullaniciAdi='{kullaniciAdi}'")
             kullaniciAdiMevcutMu=islem.fetchone()
 
             baglanti.commit()
             
             if kullaniciAdiMevcutMu is None :
-                uiAnaPencere.statusbar.showMessage("Kullanici Adi Bulunmamaktadir !",10000)
-            else:
                 islem.execute(f"SELECT * FROM tblKullanici WHERE kullaniciAdi='{kullaniciAdi}' and sifre='{sifre}'")
                 sifreMevcutMu=islem.fetchone()
                 baglanti.commit()
                 if sifreMevcutMu is None :
-                    uiAnaPencere.statusbar.showMessage("Sifre Yanlis !",10000)
-                    
-                else : 
                     menuEkrani.show()
                     anaPencere.close()
+                else : 
+                    uiAnaPencere.statusbar.showMessage("Sifre Yanlis !",10000)
+                
+            else:
+                uiAnaPencere.statusbar.showMessage("Kullanici Adi Bulunmamaktadir !",10000)
+            
+        else:
+            uiAnaPencere.statusbar.showMessage("Lütfen Sifre Giriniz !",10000)
+        
+    else :
+        uiAnaPencere.statusbar.showMessage("Lütfen Kullanici Adi Giriniz !",10000)
 
 #ANAMENÜ KISMI
 #--------------------------------------------------
