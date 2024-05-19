@@ -8,6 +8,8 @@ from anasayfa import *
 from anamenu import *
 from sifremiunuttum import *
 from kelimeEkle import *
+import csv, smtplib, ssl
+from quizEkrani import *
 
 
 
@@ -35,6 +37,10 @@ uiMenuEkrani.setupUi(menuEkrani)
 kelimeEklemeEkrani= QMainWindow()
 uikelimeEklemeEkrani= Ui_KelimeEkleme()
 uikelimeEklemeEkrani.setupUi(kelimeEklemeEkrani)
+
+quizEkrani= QMainWindow()
+uiQuizEkrani= Ui_quizEkrani()
+uiQuizEkrani.setupUi(quizEkrani)
 
 anaPencere.show()
 
@@ -82,7 +88,7 @@ def kayit_ol():
                     kullaniciAdiMevcutMu=islem.fetchone()
                     baglanti.commit
                     
-                    if kullaniciAdiMevcutMu is not None:
+                    if kullaniciAdiMevcutMu is None:
                         try:
                             ekle="insert into dbo.tblKullanici(kullaniciAdi,sifre,eposta) values(?,?,?)"
                             islem.execute(ekle,(kullaniciAdi,sifre,eposta))
@@ -157,7 +163,8 @@ def giris_yap():
 #METODLAR
 #--------------------------------------------------
 def quize_basla():
-    print("quize basla")
+    quizEkrani.show()
+
 
 
 def kelime_ekleme():
@@ -204,7 +211,8 @@ def kelime_ekleme():
     
 
     uikelimeEklemeEkrani.kelimeEkleBtn.clicked.connect(kelime_ekle)
-    #uikelimeEklemeEkrani.gorselBtn.clicked.connect(print("a"))
+    #GÖRSEL EKLEME BUTONU
+    #uikelimeEklemeEkrani.gorselBtn.clicked.connect(print("a"))  
     uikelimeEklemeEkrani.geriDonBtn.clicked.connect(menuEkrani.show)
     uikelimeEklemeEkrani.geriDonBtn.clicked.connect(kelimeEklemeEkrani.close)
 
@@ -228,9 +236,64 @@ uiMenuEkrani.ayarlarBtn.clicked.connect(ayarlar)
 
 #SİFRE DEĞİŞTİRME KISMI
 #-------------------------------------------------
-def sifre_degis():
+def sifre_gonder():
     sifremiUnuttumEkrani.show()
     anaPencere.close()
+
+    
+    def kod_yolla():
+        eposta=uiSifremiUnuttumEkrani.epostaLne.text()
+        if eposta!="":
+            islem.execute(f"SELECT eposta FROM tblKullanici WHERE eposta='{eposta}'")
+            epostaVarMi=islem.fetchone()
+            baglanti.commit
+
+            if epostaVarMi is not None:
+
+                islem.execute(f"SELECT sifre FROM tblKullanici WHERE eposta='{eposta}'")
+                sifre=islem.fetchone()
+                baglanti.commit
+                print(sifre)
+                
+
+
+                message = f"""
+                Şifreniz= {sifre}"""
+                gondericiEposta="kelime.oyunu.sifre.yolla@gmail.com"
+                gondericiSifre="zrzi mieq eieh mtwg"
+                smtp_server = "smtp.gmail.com"
+                port = 587
+
+                context = ssl.create_default_context()
+
+                try:
+                    server = smtplib.SMTP(smtp_server,port)
+                    server.ehlo() # Can be omitted
+                    server.starttls(context=context) # Secure the connection
+                    server.ehlo() # Can be omitted
+                    server.login(gondericiEposta, gondericiSifre)
+                    server.sendmail(
+                        gondericiEposta,
+                        eposta,
+                        message
+                    )
+                    
+                except Exception as e:
+                    print(e)
+                finally:
+                    server.quit() 
+                
+
+                
+            else:
+                uiSifremiUnuttumEkrani.statusbar.showMessage("Bu Epostaya ait bir kullanici bulunamamaktadir!",10000)
+        
+        else :
+            uiSifremiUnuttumEkrani.statusbar.showMessage("Lütfen Epostanizi Giriniz !",10000)
+
+
+
+    uiSifremiUnuttumEkrani.kodYollaBtn.clicked.connect(kod_yolla)
     uiSifremiUnuttumEkrani.geriDonBtn.clicked.connect(anaPencere.show)
     uiSifremiUnuttumEkrani.geriDonBtn.clicked.connect(sifremiUnuttumEkrani.close)
 
@@ -243,7 +306,7 @@ def sifre_degis():
 
 uiAnaPencere.kayitBtn.clicked.connect(kayit_ol)
 uiAnaPencere.girisBtn.clicked.connect(giris_yap)
-uiAnaPencere.sifremiUnuttumBtn.clicked.connect(sifre_degis)
+uiAnaPencere.sifremiUnuttumBtn.clicked.connect(sifre_gonder)
 
 
 

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>811</width>
     <height>600</height>
    </rect>
   </property>
@@ -33,7 +33,7 @@
       <x>250</x>
       <y>140</y>
       <width>139</width>
-      <height>181</height>
+      <height>61</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -43,23 +43,7 @@
      <item>
       <widget class="QPushButton" name="kodYollaBtn">
        <property name="text">
-        <string>Kod Yolla</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="kodLne"/>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="yeniSifreLne"/>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="yeniSifreLne2"/>
-     </item>
-     <item>
-      <widget class="QPushButton" name="sifremiDegistirBtn">
-       <property name="text">
-        <string>Şifremi Değiştir</string>
+        <string>Tamam</string>
        </property>
       </widget>
      </item>
@@ -69,7 +53,7 @@
     <property name="geometry">
      <rect>
       <x>150</x>
-      <y>290</y>
+      <y>170</y>
       <width>93</width>
       <height>28</height>
      </rect>
@@ -78,58 +62,13 @@
      <string>Geri Dön</string>
     </property>
    </widget>
-   <widget class="QWidget" name="">
-    <property name="geometry">
-     <rect>
-      <x>70</x>
-      <y>200</y>
-      <width>180</width>
-      <height>81</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout_2">
-     <item>
-      <widget class="QLabel" name="label_2">
-       <property name="layoutDirection">
-        <enum>Qt::RightToLeft</enum>
-       </property>
-       <property name="text">
-        <string>E-Postanıza Gelen Kodu Giriniz:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>Yeni Şifrenizi Giriniz:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>Yeni Şifrenizi Yeniden Giriniz:</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>811</width>
      <height>26</height>
     </rect>
    </property>
