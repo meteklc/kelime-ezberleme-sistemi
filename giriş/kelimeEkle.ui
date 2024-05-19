@@ -47,6 +47,13 @@
       <widget class="QTextEdit" name="kelimeCumleTxt"/>
      </item>
      <item>
+      <widget class="QPushButton" name="gorselBtn">
+       <property name="text">
+        <string>Görsel Ekle</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QComboBox" name="kelimeSeviyeBox">
        <property name="sizeIncrement">
         <size>

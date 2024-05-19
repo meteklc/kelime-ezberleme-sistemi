@@ -35,6 +35,9 @@ class Ui_KelimeEkleme(object):
         self.kelimeCumleTxt = QtWidgets.QTextEdit(self.widget)
         self.kelimeCumleTxt.setObjectName("kelimeCumleTxt")
         self.verticalLayout.addWidget(self.kelimeCumleTxt)
+        self.gorselBtn = QtWidgets.QPushButton(self.widget)
+        self.gorselBtn.setObjectName("gorselBtn")
+        self.verticalLayout.addWidget(self.gorselBtn)
         self.kelimeSeviyeBox = QtWidgets.QComboBox(self.widget)
         self.kelimeSeviyeBox.setSizeIncrement(QtCore.QSize(3, 3))
         self.kelimeSeviyeBox.setObjectName("kelimeSeviyeBox")
@@ -90,6 +93,7 @@ class Ui_KelimeEkleme(object):
         _translate = QtCore.QCoreApplication.translate
         KelimeEkleme.setWindowTitle(_translate("KelimeEkleme", "Kelime Ekleme"))
         self.label_4.setText(_translate("KelimeEkleme", "Kelimenin Seviyesini Giriniz:"))
+        self.gorselBtn.setText(_translate("KelimeEkleme", "Görsel Ekle"))
         self.kelimeSeviyeBox.setItemText(0, _translate("KelimeEkleme", "A1"))
         self.kelimeSeviyeBox.setItemText(1, _translate("KelimeEkleme", "A2"))
         self.kelimeSeviyeBox.setItemText(2, _translate("KelimeEkleme", "B1"))

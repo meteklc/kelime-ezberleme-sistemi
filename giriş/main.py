@@ -12,6 +12,7 @@ from kelimeEkle import *
 
 
 
+
 #----------------------------------------------
 
 uygulama= QApplication(sys.argv)
@@ -166,8 +167,44 @@ def kelime_ekleme():
     
     def kelime_ekle():
         print("kelime ekle")
+        kelime=uikelimeEklemeEkrani.kelimeLne.text()
+        kelimeTurkcesi=uikelimeEklemeEkrani.kelimeTrLne.text()
+        kelimeCumle=uikelimeEklemeEkrani.kelimeCumleTxt.toPlainText()
+
+        if kelime!= "":
+                
+            if kelimeTurkcesi!="":
+                if kelimeCumle!="":
+                    islem.execute(f"SELECT kelime FROM tblKelimeler WHERE kelime='{kelime}'")
+                    kelimeMevcutMu=islem.fetchone()
+                    baglanti.commit
+                    
+                    if kelimeMevcutMu is None:
+                        try:
+                            ekle="insert into dbo.tblKelimeler(kelime,kelimeTurkcesi,kelimeCumle) values(?,?,?)"
+                            islem.execute(ekle,(kelime,kelimeTurkcesi,kelimeCumle))
+                            baglanti.commit()
+                            uikelimeEklemeEkrani.statusbar.showMessage("Kelime Eklendi !",10000)
+                        except:
+                            uikelimeEklemeEkrani.statusbar.showMessage("Kelime Eklenemedi.",10000)
+                    else :
+                        uikelimeEklemeEkrani.statusbar.showMessage("Bu Kelime Zaten Mevcut.",10000)
+                    
+                else:
+                    uikelimeEklemeEkrani.statusbar.showMessage("Lütfen Kelimeyi Bir Cümle İçersinde Kullaniniz!",10000)
+            else: 
+                
+                uikelimeEklemeEkrani.statusbar.showMessage("Lütfen Kelimenin Türkçesini Giriniz !",10000)
+                        
+        else :
+            uikelimeEklemeEkrani.statusbar.showMessage("Lütfen Kelime Giriniz !",10000)
+
+    
+
+    
 
     uikelimeEklemeEkrani.kelimeEkleBtn.clicked.connect(kelime_ekle)
+    #uikelimeEklemeEkrani.gorselBtn.clicked.connect(print("a"))
     uikelimeEklemeEkrani.geriDonBtn.clicked.connect(menuEkrani.show)
     uikelimeEklemeEkrani.geriDonBtn.clicked.connect(kelimeEklemeEkrani.close)
 
