@@ -100,12 +100,12 @@ def kayit_ol():
                 if eposta!="":
                     islem.execute(f"SELECT kullaniciAdi FROM tblKullanici WHERE kullaniciAdi='{kullaniciAdi}'")
                     kullaniciAdiMevcutMu=islem.fetchone()
-                    baglanti.commit
+                    baglanti.commit()
                     
                     if kullaniciAdiMevcutMu is None:
                         try:
-                            ekle="insert into dbo.tblKullanici(kullaniciAdi,sifre,eposta) values(?,?,?)"
-                            islem.execute(ekle,(kullaniciAdi,sifre,eposta))
+                            ekle="insert into dbo.tblKullanici(kullaniciAdi,sifre,eposta,kacSoru) values(?,?,?,?)"
+                            islem.execute(ekle,(kullaniciAdi,sifre,eposta,10))
                             baglanti.commit()
                             uiKayitEkrani.statusbar.showMessage("Kayit Eklendi !",10000)
                         except:
@@ -159,7 +159,7 @@ def giris_yap(kullaniciID: any):
                 if sifreMevcutMu is not None :
                     islem.execute(f"SELECT kullaniciID FROM tblKullanici WHERE kullaniciAdi='{kullaniciAdi}' and sifre='{sifre}'")
                     kullaniciID=islem.fetchone()
-                    baglanti.commit
+                    baglanti.commit()
                     user.set_id(kullaniciID[0])
                     
 
@@ -205,7 +205,7 @@ def kelime_ekleme():
                 if kelimeCumle!="":
                     islem.execute(f"SELECT kelime FROM tblKelimeler WHERE kelime='{kelime}'")
                     kelimeMevcutMu=islem.fetchone()
-                    baglanti.commit
+                    baglanti.commit()
                     
                     if kelimeMevcutMu is None:
                         try:
