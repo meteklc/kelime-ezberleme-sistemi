@@ -10,6 +10,7 @@ from sifremiunuttum import *
 from kelimeEkle import *
 import csv, smtplib, ssl
 from quizEkrani import *
+from ayarlar import *
 
 
 
@@ -42,6 +43,10 @@ quizEkrani= QMainWindow()
 uiQuizEkrani= Ui_quizEkrani()
 uiQuizEkrani.setupUi(quizEkrani)
 
+ayarlarEkrani= QMainWindow()
+uiAyarlarEkrani= Ui_ayarlar()
+uiAyarlarEkrani.setupUi(ayarlarEkrani)
+
 anaPencere.show()
 
 
@@ -63,6 +68,14 @@ baglanti = odbc.connect(connection_string)
 islem=baglanti.cursor()
 baglanti.commit()
 
+class kullanici:
+    def __init__(self, id = 0):
+        self._id = id
+    def get_id(self):
+        return self._id
+    def set_id(self, x):
+        self._id=x
+user = kullanici()
 #KAYIT KISMI---------------------------------------------------
 #METODLAR
 #----------------------------------------------
@@ -127,7 +140,7 @@ def kayit_ol():
 #GİRİS KISMI
 #def
 #------------------------------------------------------
-def giris_yap():
+def giris_yap(kullaniciID: any):
     
     kullaniciAdi=uiAnaPencere.kullaniciAdiLne.text()
     sifre=uiAnaPencere.sifreLne.text()
@@ -143,8 +156,15 @@ def giris_yap():
                 sifreMevcutMu=islem.fetchone()
                 baglanti.commit()
                 if sifreMevcutMu is not None :
+                    islem.execute(f"SELECT kullaniciID FROM tblKullanici WHERE kullaniciAdi='{kullaniciAdi}' and sifre='{sifre}'")
+                    kullaniciID=islem.fetchone()
+                    baglanti.commit
+                    user.set_id(kullaniciID[0])
+                    
+
                     menuEkrani.show()
                     anaPencere.close()
+                    
                 else : 
                     uiAnaPencere.statusbar.showMessage("Sifre Yanlis !",10000)
                 
@@ -173,7 +193,7 @@ def kelime_ekleme():
 
     
     def kelime_ekle():
-        print("kelime ekle")
+        
         kelime=uikelimeEklemeEkrani.kelimeLne.text()
         kelimeTurkcesi=uikelimeEklemeEkrani.kelimeTrLne.text()
         kelimeCumle=uikelimeEklemeEkrani.kelimeCumleTxt.toPlainText()
@@ -219,8 +239,25 @@ def kelime_ekleme():
 
 
 def ayarlar():
-    print("ayarlar")
-
+    ayarlarEkrani.show()
+    menuEkrani.close()
+    def kac_soru():
+        kullaniciID=int(user.get_id())
+        kacSoru=int(uiAyarlarEkrani.kacSoruBox.text())
+        print(kacSoru)
+        print(kullaniciID)
+        try:
+            print((f"update tblKullanici set kacSoru='{kacSoru}' where kullaniciID='{kullaniciID}'"))
+            islem.execute(f"update tblKullanici set kacSoru='{kacSoru}' where kullaniciID='{kullaniciID}'")
+            baglanti.commit
+            uiAyarlarEkrani.statusbar.showMessage("Kaydedildi !",10000)
+        except:
+            uiAyarlarEkrani.statusbar.showMessage("Kaydedilemedi.",10000)
+        
+    
+    uiAyarlarEkrani.kaydetBtn.clicked.connect(kac_soru)
+    uiAyarlarEkrani.geriDonBtn.clicked.connect(menuEkrani.show)
+    uiAyarlarEkrani.geriDonBtn.clicked.connect(ayarlarEkrani.close)
 #BUTONLAR
 #-----------------------------------------------
 
@@ -268,11 +305,11 @@ def sifre_gonder():
 
                 try:
                     server = smtplib.SMTP(smtp_server,port)
-                    server.ehlo() # Can be omitted
-                    server.starttls(context=context) # Secure the connection
-                    server.ehlo() # Can be omitted
+                    server.ehlo() 
+                    server.starttls(context=context)
+                    server.ehlo()
                     server.login(gondericiEposta, gondericiSifre)
-                    server.sendmail(
+                    server.sendmail(          #ÇALIŞMIYOR 
                         gondericiEposta,
                         eposta,
                         message
