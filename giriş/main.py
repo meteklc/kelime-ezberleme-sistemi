@@ -247,7 +247,7 @@ def ayarlar():
         print(kacSoru)
         print(kullaniciID)
         try:
-            print((f"update tblKullanici set kacSoru='{kacSoru}' where kullaniciID='{kullaniciID}'"))
+            print(f"update tblKullanici set kacSoru='{kacSoru}' where kullaniciID='{kullaniciID}'")
             islem.execute(f"update tblKullanici set kacSoru='{kacSoru}' where kullaniciID='{kullaniciID}'")
             baglanti.commit
             uiAyarlarEkrani.statusbar.showMessage("Kaydedildi !",10000)
