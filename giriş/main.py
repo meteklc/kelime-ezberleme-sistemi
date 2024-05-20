@@ -16,6 +16,7 @@ from ayarlar import *
 
 
 
+
 #----------------------------------------------
 
 uygulama= QApplication(sys.argv)
@@ -249,7 +250,7 @@ def ayarlar():
         try:
             print(f"update tblKullanici set kacSoru='{kacSoru}' where kullaniciID='{kullaniciID}'")
             islem.execute(f"update tblKullanici set kacSoru='{kacSoru}' where kullaniciID='{kullaniciID}'")
-            baglanti.commit
+            baglanti.commit()
             uiAyarlarEkrani.statusbar.showMessage("Kaydedildi !",10000)
         except:
             uiAyarlarEkrani.statusbar.showMessage("Kaydedilemedi.",10000)
