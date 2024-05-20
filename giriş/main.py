@@ -114,13 +114,13 @@ def kayit_ol():
                         uiKayitEkrani.statusbar.showMessage("Bu Kullanici Adi Kullanilmaktadir.",10000)
                     
                 else:
-                    uiKayitEkrani.statusbar.showMessage("Lütfen Sifre Giriniz !",10000)
+                    uiKayitEkrani.statusbar.showMessage("Lutfen Sifre Giriniz !",10000)
             else: 
                 
-                uiKayitEkrani.statusbar.showMessage("Lütfen Sifre Giriniz !",10000)
+                uiKayitEkrani.statusbar.showMessage("Lutfen Sifre Giriniz !",10000)
                         
         else :
-            uiKayitEkrani.statusbar.showMessage("Lütfen Kullanici Adi Giriniz !",10000)
+            uiKayitEkrani.statusbar.showMessage("Lutfen Kullanici Adi Giriniz !",10000)
                     
                     
     #BUTONLAR
@@ -138,7 +138,7 @@ def kayit_ol():
 
 
 
-#GİRİS KISMI
+#G�R�S KISMI
 #def
 #------------------------------------------------------
 def giris_yap(kullaniciID: any):
@@ -173,12 +173,12 @@ def giris_yap(kullaniciID: any):
                 uiAnaPencere.statusbar.showMessage("Kullanici Adi Bulunmamaktadir !",10000)
             
         else:
-            uiAnaPencere.statusbar.showMessage("Lütfen Sifre Giriniz !",10000)
+            uiAnaPencere.statusbar.showMessage("Lutfen Sifre Giriniz !",10000)
         
     else :
-        uiAnaPencere.statusbar.showMessage("Lütfen Kullanici Adi Giriniz !",10000)
+        uiAnaPencere.statusbar.showMessage("Lutfen Kullanici Adi Giriniz !",10000)
 
-#ANAMENÜ KISMI
+#ANAMEN� KISMI
 #--------------------------------------------------
 
 #METODLAR
@@ -219,20 +219,20 @@ def kelime_ekleme():
                         uikelimeEklemeEkrani.statusbar.showMessage("Bu Kelime Zaten Mevcut.",10000)
                     
                 else:
-                    uikelimeEklemeEkrani.statusbar.showMessage("Lütfen Kelimeyi Bir Cümle İçersinde Kullaniniz!",10000)
+                    uikelimeEklemeEkrani.statusbar.showMessage("Lutfen Kelimeyi Bir Cumle Icersinde Kullaniniz!",10000)
             else: 
                 
-                uikelimeEklemeEkrani.statusbar.showMessage("Lütfen Kelimenin Türkçesini Giriniz !",10000)
+                uikelimeEklemeEkrani.statusbar.showMessage("Lutfen Kelimenin Turkcesini Giriniz !",10000)
                         
         else :
-            uikelimeEklemeEkrani.statusbar.showMessage("Lütfen Kelime Giriniz !",10000)
+            uikelimeEklemeEkrani.statusbar.showMessage("Lutfen Kelime Giriniz !",10000)
 
     
 
     
 
     uikelimeEklemeEkrani.kelimeEkleBtn.clicked.connect(kelime_ekle)
-    #GÖRSEL EKLEME BUTONU
+    #G�RSEL EKLEME BUTONU
     #uikelimeEklemeEkrani.gorselBtn.clicked.connect(print("a"))  
     uikelimeEklemeEkrani.geriDonBtn.clicked.connect(menuEkrani.show)
     uikelimeEklemeEkrani.geriDonBtn.clicked.connect(kelimeEklemeEkrani.close)
@@ -272,7 +272,7 @@ uiMenuEkrani.ayarlarBtn.clicked.connect(ayarlar)
 
 
 
-#SİFRE DEĞİŞTİRME KISMI
+#S�FRE DE���T�RME KISMI
 #-------------------------------------------------
 def sifre_gonder():
     sifremiUnuttumEkrani.show()
@@ -296,7 +296,7 @@ def sifre_gonder():
 
 
                 message = f"""
-                Şifreniz= {sifre}"""
+                �ifreniz= {sifre}"""
                 gondericiEposta="kelime.oyunu.sifre.yolla@gmail.com"
                 gondericiSifre="zrzi mieq eieh mtwg"
                 smtp_server = "smtp.gmail.com"
@@ -310,7 +310,7 @@ def sifre_gonder():
                     server.starttls(context=context)
                     server.ehlo()
                     server.login(gondericiEposta, gondericiSifre)
-                    server.sendmail(          #ÇALIŞMIYOR 
+                    server.sendmail(          #�ALI�MIYOR 
                         gondericiEposta,
                         eposta,
                         message
@@ -327,7 +327,7 @@ def sifre_gonder():
                 uiSifremiUnuttumEkrani.statusbar.showMessage("Bu Epostaya ait bir kullanici bulunamamaktadir!",10000)
         
         else :
-            uiSifremiUnuttumEkrani.statusbar.showMessage("Lütfen Epostanizi Giriniz !",10000)
+            uiSifremiUnuttumEkrani.statusbar.showMessage("Lutfen Epostanizi Giriniz !",10000)
 
 
 
