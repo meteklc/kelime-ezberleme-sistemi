@@ -11,6 +11,13 @@ from kelimeEkle import *
 import csv, smtplib, ssl
 from quizEkrani import *
 from ayarlar import *
+import sys
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
+
+import tkinter as tk
+from tkinter import filedialog
 
 
 
@@ -191,49 +198,60 @@ def quize_basla():
 def kelime_ekleme():
     kelimeEklemeEkrani.show()
     menuEkrani.close()
-
     
-    def kelime_ekle():
+    def import_file():
+        file_path = filedialog.askopenfilename(title="Gorsel Seciniz", filetypes=[("Gorseller", "*.png"),("Gorseller", "*.jpg")])
+        if file_path:
+            
+            def kelime_ekle():
         
-        kelime=uikelimeEklemeEkrani.kelimeLne.text()
-        kelimeTurkcesi=uikelimeEklemeEkrani.kelimeTrLne.text()
-        kelimeCumle=uikelimeEklemeEkrani.kelimeCumleTxt.toPlainText()
+                kelime=uikelimeEklemeEkrani.kelimeLne.text()
+                kelimeTurkcesi=uikelimeEklemeEkrani.kelimeTrLne.text()
+                kelimeCumle=uikelimeEklemeEkrani.kelimeCumleTxt.toPlainText()
 
-        if kelime!= "":
-                
-            if kelimeTurkcesi!="":
-                if kelimeCumle!="":
-                    islem.execute(f"SELECT kelime FROM tblKelimeler WHERE kelime='{kelime}'")
-                    kelimeMevcutMu=islem.fetchone()
-                    baglanti.commit()
-                    
-                    if kelimeMevcutMu is None:
-                        try:
-                            ekle="insert into dbo.tblKelimeler(kelime,kelimeTurkcesi,kelimeCumle) values(?,?,?)"
-                            islem.execute(ekle,(kelime,kelimeTurkcesi,kelimeCumle))
-                            baglanti.commit()
-                            uikelimeEklemeEkrani.statusbar.showMessage("Kelime Eklendi !",10000)
-                        except:
-                            uikelimeEklemeEkrani.statusbar.showMessage("Kelime Eklenemedi.",10000)
-                    else :
-                        uikelimeEklemeEkrani.statusbar.showMessage("Bu Kelime Zaten Mevcut.",10000)
-                    
-                else:
-                    uikelimeEklemeEkrani.statusbar.showMessage("Lutfen Kelimeyi Bir Cumle Icersinde Kullaniniz!",10000)
-            else: 
-                
-                uikelimeEklemeEkrani.statusbar.showMessage("Lutfen Kelimenin Turkcesini Giriniz !",10000)
+                if kelime!= "":
                         
+                    if kelimeTurkcesi!="":
+                        if kelimeCumle!="":
+                            islem.execute(f"SELECT kelime FROM tblKelimeler WHERE kelime='{kelime}'")
+                            kelimeMevcutMu=islem.fetchone()
+                            baglanti.commit()
+
+                            if kelimeMevcutMu is None:
+                                
+                                    
+                                    try:
+                                        ekle="insert into dbo.tblKelimeler(kelime,kelimeTurkcesi,kelimeCumle,kelimeGorsel) values(?,?,?,?)"
+                                        islem.execute(ekle,(kelime,kelimeTurkcesi,kelimeCumle,file_path))
+                                        baglanti.commit()
+                                        uikelimeEklemeEkrani.statusbar.showMessage("Kelime Eklendi !",10000)
+                                    except:
+                                        uikelimeEklemeEkrani.statusbar.showMessage("Kelime Eklenemedi.",10000)
+                            else :
+                                uikelimeEklemeEkrani.statusbar.showMessage("Bu Kelime Zaten Mevcut.",10000)
+                            
+                        else:
+                            uikelimeEklemeEkrani.statusbar.showMessage("Lutfen Kelimeyi Bir Cumle Icersinde Kullaniniz!",10000)
+                    else: 
+                        
+                        uikelimeEklemeEkrani.statusbar.showMessage("Lutfen Kelimenin Turkcesini Giriniz !",10000)
+                                
+                else :
+                    uikelimeEklemeEkrani.statusbar.showMessage("Lutfen Kelime Giriniz !",10000)
+
+            uikelimeEklemeEkrani.kelimeEkleBtn.clicked.connect(kelime_ekle)
         else :
-            uikelimeEklemeEkrani.statusbar.showMessage("Lutfen Kelime Giriniz !",10000)
+            uikelimeEklemeEkrani.statusbar.showMessage("Lutfen Gorsel Ekleyiniz!",10000)
+            
+            
+
+    def gorsel_ekleyiniz():
+        uikelimeEklemeEkrani.statusbar.showMessage("Lutfen Gorsel Ekleyiniz!",10000)
 
     
+    uikelimeEklemeEkrani.gorselBtn.clicked.connect(import_file)
+    uikelimeEklemeEkrani.kelimeEkleBtn.clicked.connect(gorsel_ekleyiniz)
 
-    
-
-    uikelimeEklemeEkrani.kelimeEkleBtn.clicked.connect(kelime_ekle)
-    #G�RSEL EKLEME BUTONU
-    #uikelimeEklemeEkrani.gorselBtn.clicked.connect(print("a"))  
     uikelimeEklemeEkrani.geriDonBtn.clicked.connect(menuEkrani.show)
     uikelimeEklemeEkrani.geriDonBtn.clicked.connect(kelimeEklemeEkrani.close)
 
@@ -245,10 +263,7 @@ def ayarlar():
     def kac_soru():
         kullaniciID=int(user.get_id())
         kacSoru=int(uiAyarlarEkrani.kacSoruBox.text())
-        print(kacSoru)
-        print(kullaniciID)
         try:
-            print(f"update tblKullanici set kacSoru='{kacSoru}' where kullaniciID='{kullaniciID}'")
             islem.execute(f"update tblKullanici set kacSoru='{kacSoru}' where kullaniciID='{kullaniciID}'")
             baglanti.commit()
             uiAyarlarEkrani.statusbar.showMessage("Kaydedildi !",10000)
@@ -291,12 +306,11 @@ def sifre_gonder():
                 islem.execute(f"SELECT sifre FROM tblKullanici WHERE eposta='{eposta}'")
                 sifre=islem.fetchone()
                 baglanti.commit
-                print(sifre)
-                
 
+                message = f"""\
+                Sifreniz Asagidadir.
 
-                message = f"""
-                �ifreniz= {sifre}"""
+                Sifreniz= {sifre[0]}"""
                 gondericiEposta="kelime.oyunu.sifre.yolla@gmail.com"
                 gondericiSifre="zrzi mieq eieh mtwg"
                 smtp_server = "smtp.gmail.com"
@@ -312,7 +326,7 @@ def sifre_gonder():
                     server.login(gondericiEposta, gondericiSifre)
                     server.sendmail(          #�ALI�MIYOR 
                         gondericiEposta,
-                        eposta,
+                        epostaVarMi[0],
                         message
                     )
                     
