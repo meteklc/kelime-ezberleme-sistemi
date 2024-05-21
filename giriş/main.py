@@ -11,12 +11,6 @@ from kelimeEkle import *
 import csv, smtplib, ssl
 from quizEkrani import *
 from ayarlar import *
-import sys
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-
-import tkinter as tk
 from tkinter import filedialog
 
 
@@ -148,7 +142,7 @@ def kayit_ol():
 #G�R�S KISMI
 #def
 #------------------------------------------------------
-def giris_yap(kullaniciID: any):
+def giris_yap():
     
     kullaniciAdi=uiAnaPencere.kullaniciAdiLne.text()
     sifre=uiAnaPencere.sifreLne.text()
@@ -194,66 +188,67 @@ def quize_basla():
     quizEkrani.show()
 
 
+file_path = None
 
 def kelime_ekleme():
     kelimeEklemeEkrani.show()
     menuEkrani.close()
     
     def import_file():
+        global file_path
         file_path = filedialog.askopenfilename(title="Gorsel Seciniz", filetypes=[("Gorseller", "*.png"),("Gorseller", "*.jpg")])
         if file_path:
-            
-            def kelime_ekle():
-        
-                kelime=uikelimeEklemeEkrani.kelimeLne.text()
-                kelimeTurkcesi=uikelimeEklemeEkrani.kelimeTrLne.text()
-                kelimeCumle=uikelimeEklemeEkrani.kelimeCumleTxt.toPlainText()
+            uikelimeEklemeEkrani.gorselBtn.clicked.disconnect(import_file)
+            uikelimeEklemeEkrani.gorselBtn.clicked.connect(file_path_bosalt)
+            uikelimeEklemeEkrani.gorselBtn.clicked.connect(import_file)
 
-                if kelime!= "":
-                        
-                    if kelimeTurkcesi!="":
-                        if kelimeCumle!="":
-                            islem.execute(f"SELECT kelime FROM tblKelimeler WHERE kelime='{kelime}'")
-                            kelimeMevcutMu=islem.fetchone()
-                            baglanti.commit()
+    def kelime_ekle():
+        global file_path
+        if file_path:
+            gorsel = file_path
+            kelime = uikelimeEklemeEkrani.kelimeLne.text()
+            kelimeTurkcesi = uikelimeEklemeEkrani.kelimeTrLne.text()
+            kelimeCumle = uikelimeEklemeEkrani.kelimeCumleTxt.toPlainText()
 
-                            if kelimeMevcutMu is None:
-                                
-                                    
-                                    try:
-                                        ekle="insert into dbo.tblKelimeler(kelime,kelimeTurkcesi,kelimeCumle,kelimeGorsel) values(?,?,?,?)"
-                                        islem.execute(ekle,(kelime,kelimeTurkcesi,kelimeCumle,file_path))
-                                        baglanti.commit()
-                                        uikelimeEklemeEkrani.statusbar.showMessage("Kelime Eklendi !",10000)
-                                    except:
-                                        uikelimeEklemeEkrani.statusbar.showMessage("Kelime Eklenemedi.",10000)
-                            else :
-                                uikelimeEklemeEkrani.statusbar.showMessage("Bu Kelime Zaten Mevcut.",10000)
-                            
-                        else:
-                            uikelimeEklemeEkrani.statusbar.showMessage("Lutfen Kelimeyi Bir Cumle Icersinde Kullaniniz!",10000)
-                    else: 
-                        
-                        uikelimeEklemeEkrani.statusbar.showMessage("Lutfen Kelimenin Turkcesini Giriniz !",10000)
-                                
-                else :
-                    uikelimeEklemeEkrani.statusbar.showMessage("Lutfen Kelime Giriniz !",10000)
+            if kelime != "" and kelimeTurkcesi != "" and kelimeCumle != "":
+                islem.execute(f"SELECT kelime FROM tblKelimeler WHERE kelime='{kelime}'")
+                kelimeMevcutMu = islem.fetchone()
+                baglanti.commit()
 
-            uikelimeEklemeEkrani.kelimeEkleBtn.clicked.connect(kelime_ekle)
-        else :
-            uikelimeEklemeEkrani.statusbar.showMessage("Lutfen Gorsel Ekleyiniz!",10000)
-            
-            
+                if kelimeMevcutMu is None:
+                    try:
+                        ekle = "insert into dbo.tblKelimeler(kelime,kelimeTurkcesi,kelimeCumle,kelimeGorsel) values(?,?,?,?)"
+                        islem.execute(ekle, (kelime, kelimeTurkcesi, kelimeCumle, gorsel))
+                        baglanti.commit()
+                        uikelimeEklemeEkrani.kelimeLne.clear()
+                        uikelimeEklemeEkrani.kelimeTrLne.clear()
+                        uikelimeEklemeEkrani.kelimeCumleTxt.clear()
+                        uikelimeEklemeEkrani.statusbar.showMessage("Kelime Eklendi !", 10000)
+                    except Exception as e:
+                        print("Hata:", e)
+                        uikelimeEklemeEkrani.statusbar.showMessage("Kelime Eklenemedi.", 10000)
+                else:
+                    uikelimeEklemeEkrani.statusbar.showMessage("Bu Kelime Zaten Mevcut.", 10000)
+            else:
+                uikelimeEklemeEkrani.statusbar.showMessage("Lutfen Tum Alanlari Doldurun!", 10000)
+        else:
+            uikelimeEklemeEkrani.statusbar.showMessage("Lutfen Gorsel Seciniz!", 10000)
 
     def gorsel_ekleyiniz():
-        uikelimeEklemeEkrani.statusbar.showMessage("Lutfen Gorsel Ekleyiniz!",10000)
+        uikelimeEklemeEkrani.statusbar.showMessage("Lutfen Gorsel Ekleyiniz!", 10000)
 
-    
+    def file_path_bosalt():
+        global file_path
+        file_path = None
+        uikelimeEklemeEkrani.gorselBtn.clicked.disconnect(file_path_bosalt)
+        uikelimeEklemeEkrani.gorselBtn.clicked.disconnect(import_file)
+        uikelimeEklemeEkrani.gorselBtn.clicked.connect(import_file)
+
     uikelimeEklemeEkrani.gorselBtn.clicked.connect(import_file)
-    uikelimeEklemeEkrani.kelimeEkleBtn.clicked.connect(gorsel_ekleyiniz)
-
+    uikelimeEklemeEkrani.kelimeEkleBtn.clicked.connect(kelime_ekle)
     uikelimeEklemeEkrani.geriDonBtn.clicked.connect(menuEkrani.show)
     uikelimeEklemeEkrani.geriDonBtn.clicked.connect(kelimeEklemeEkrani.close)
+
 
 
 
