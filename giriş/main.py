@@ -89,48 +89,45 @@ def kayit_ol():
 
     #METODLAR
     #-------------------------------------------------
-    def kayit_ekle():
-        kullaniciAdi=uiKayitEkrani.kayitKullaniciAdiLne.text()
-        sifre=uiKayitEkrani.kayitSifreLne.text()
-        eposta=uiKayitEkrani.kayitEpostaLne.text()
-        
+def kayit_ekle():
+    kullaniciAdi = uiKayitEkrani.kayitKullaniciAdiLne.text()
+    sifre = uiKayitEkrani.kayitSifreLne.text()
+    eposta = uiKayitEkrani.kayitEpostaLne.text()
 
-        if kullaniciAdi!= "":
-                
-            if sifre!="":
-                if eposta!="":
-                    islem.execute(f"SELECT kullaniciAdi FROM tblKullanici WHERE kullaniciAdi='{kullaniciAdi}'")
-                    kullaniciAdiMevcutMu=islem.fetchone()
-                    baglanti.commit()
-                    
-                    if kullaniciAdiMevcutMu is None:
-                        try:
-                            ekle="insert into dbo.tblKullanici(kullaniciAdi,sifre,eposta,kacSoru) values(?,?,?,?)"
-                            islem.execute(ekle,(kullaniciAdi,sifre,eposta,10))
-                            baglanti.commit()
-                            uiKayitEkrani.statusbar.showMessage("Kayit Eklendi !",10000)
-                        except:
-                            uiKayitEkrani.statusbar.showMessage("Kayit Eklenemedi.",10000)
-                    else :
-                        uiKayitEkrani.statusbar.showMessage("Bu Kullanici Adi Kullanilmaktadir.",10000)
-                    
-                else:
-                    uiKayitEkrani.statusbar.showMessage("Lutfen Sifre Giriniz !",10000)
-            else: 
-                
-                uiKayitEkrani.statusbar.showMessage("Lutfen Sifre Giriniz !",10000)
-                        
-        else :
-            uiKayitEkrani.statusbar.showMessage("Lutfen Kullanici Adi Giriniz !",10000)
-                    
-                    
-    #BUTONLAR
-    #-------------------------------------------------
+    if kullaniciAdi and sifre and eposta:
+        try:
+            # Kullanıcıyı kullanıcı tablosuna ekle
+            ekle_kullanici = "INSERT INTO dbo.tblKullanici (kullaniciAdi, sifre, eposta, kacSoru) VALUES (?, ?, ?, ?)"
+            islem.execute(ekle_kullanici, (kullaniciAdi, sifre, eposta, 10))
+            baglanti.commit()
 
-    uiKayitEkrani.kayitEkleBtn.clicked.connect(kayit_ekle)
-    uiKayitEkrani.geriDonBtn.clicked.connect(anaPencere.show)
-    uiKayitEkrani.geriDonBtn.clicked.connect(kayitEkrani.close)
+            # Eklenen kullanıcının ID'sini al
+            islem.execute("SELECT IDENT_CURRENT('dbo.tblKullanici')")
+            kullaniciID = islem.fetchone()[0]
 
+            # Tüm kelime ID'lerini al
+            islem.execute("SELECT kelimeID FROM dbo.tblKelimeler")
+            kelimeIDler = islem.fetchall()
+
+            # Her bir kelime için kullanıcının kelime detayını oluştur
+            for kelimeID in kelimeIDler:
+                ekle_kullanici_kelime_detay = "INSERT INTO dbo.tblKelimeDetay (kelimeSayac, kelimeID, kullaniciID) VALUES (0, ?, ?)"
+                islem.execute(ekle_kullanici_kelime_detay, (kelimeID[0], kullaniciID))
+                baglanti.commit()
+
+            uiKayitEkrani.statusbar.showMessage("Kayit Eklendi !", 10000)
+        except Exception as e:
+            print("Hata:", e)
+            uiKayitEkrani.statusbar.showMessage("Kayit Eklenemedi.", 10000)
+    else:
+        uiKayitEkrani.statusbar.showMessage("Tüm alanları doldurun!", 10000)
+
+# BUTONLAR
+# -------------------------------------------------
+
+uiKayitEkrani.kayitEkleBtn.clicked.connect(kayit_ekle)
+uiKayitEkrani.geriDonBtn.clicked.connect(anaPencere.show)
+uiKayitEkrani.geriDonBtn.clicked.connect(kayitEkrani.close)
 
 
 
@@ -227,6 +224,32 @@ def kelime_ekleme():
                     except Exception as e:
                         print("Hata:", e)
                         uikelimeEklemeEkrani.statusbar.showMessage("Kelime Eklenemedi.", 10000)
+                    try:
+
+                        ekle = "insert into dbo.tblKelimeler(kelime,kelimeTurkcesi,kelimeCumle,kelimeGorsel) values(?,?,?,?)"
+                        islem.execute(ekle, (kelime, kelimeTurkcesi, kelimeCumle, gorsel))
+                        baglanti.commit()
+
+                        # Eklenen kullanıcının ID'sini al
+                        islem.execute("SELECT IDENT_CURRENT('dbo.tblKelimeler')")
+                        kelimeID = islem.fetchone()[0]
+
+                        # Tüm kelime ID'lerini al
+                        islem.execute("SELECT kullaniciID FROM dbo.tblKullanici")
+                        kullaniciIDler = islem.fetchall()
+
+                        # Her bir kelime için kullanıcının kelime detayını oluştur
+                        for kullaniciID in kullaniciIDler:
+                            ekle_kullanici_kelime_detay = "INSERT INTO dbo.tblKelimeDetay (kelimeSayac, kelimeID, kullaniciID) VALUES (0, ?, ?)"
+                            islem.execute(ekle_kullanici_kelime_detay, (kelimeID, kullaniciID[0]))
+                            baglanti.commit()
+                        uikelimeEklemeEkrani.kelimeLne.clear()
+                        uikelimeEklemeEkrani.kelimeTrLne.clear()
+                        uikelimeEklemeEkrani.kelimeCumleTxt.clear()
+                        uiKayitEkrani.statusbar.showMessage("Kayit Eklendi !", 10000)
+                    except Exception as e:
+                        print("Hata:", e)
+                        uiKayitEkrani.statusbar.showMessage("Kayit Eklenemedi.", 10000)
                 else:
                     uikelimeEklemeEkrani.statusbar.showMessage("Bu Kelime Zaten Mevcut.", 10000)
             else:
