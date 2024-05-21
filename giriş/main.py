@@ -183,9 +183,76 @@ def giris_yap(kullaniciID: any):
 
 #METODLAR
 #--------------------------------------------------
+
+soruSayac=0
+kacSoru=10
+
 def quize_basla():
     quizEkrani.show()
 
+    global soruSayac
+
+    islem.execute(f"SELECT kelime FROM tbl WHERE kelimeSayac=0 AND kelimeID random")
+    cekilen_kelime = islem.fetchone()
+    
+    if cekilen_kelime:
+        uiQuizEkrani.kelimeLabel.setText(cekilen_kelime[0])
+    else:
+        uiQuizEkrani.statusbar.showMessage("Yeterince Ekli kelime yok!",10000)
+    baglanti.commit()
+        
+def cevabi_gir():
+    
+    girilen_kelime = uiQuizEkrani.cevapLne.text()
+    mevcut_kelime = uiQuizEkrani.kelimeLabel.text()
+    
+    islem.execute(f"SELECT * FROM tbl WHERE kelime=? AND turkcesi=?", (mevcut_kelime, girilen_kelime))
+    kelimeDogruMu = islem.fetchone()
+    baglanti.commit()
+    
+    
+    if kelimeDogruMu:
+        islem.execute(f"UPDATE tbl SET kelimeSayac=kelimeSayac+1, kelimeBilinmeTarihi=? WHERE kelime=?", (datetime.now().date(), mevcut_kelime))
+        kelimeSayac = islem.fetchone()[0]
+        baglanti.commit()
+        
+        if kelimeSayac == 6:
+            islem.execute(f"UPDATE tbl SET bilinen=1 WHERE kelime=?", (mevcut_kelime,))
+            baglanti.commit()
+        else: 
+            if soruSayac < kacSoru:
+                quize_basla()
+            else:
+                sonraki_kelimeyi_getir()    
+    else :
+        islem.execute(f"kelimeSayac=0")
+
+
+def sonraki_kelimeyi_getir():
+    global soruSayac
+    
+    sorgu_listesi = [
+        "SELECT kelime FROM tbl WHERE kelimeSayac=1 AND ? - kelimeBilinmeTarihi > 1",
+        "SELECT kelime FROM tbl WHERE kelimeSayac=2 AND ? - kelimeBilinmeTarihi > 7",
+        "SELECT kelime FROM tbl WHERE kelimeSayac=3 AND ? - kelimeBilinmeTarihi > 30",
+        "SELECT kelime FROM tbl WHERE kelimeSayac=4 AND ? - kelimeBilinmeTarihi > 90",
+        "SELECT kelime FROM tbl WHERE kelimeSayac=5 AND ? - kelimeBilinmeTarihi > 180",
+        "SELECT kelime FROM tbl WHERE kelimeSayac=6 AND ? - kelimeBilinmeTarihi > 360"
+    ]
+    
+    for sorgu in sorgu_listesi:
+        islem.execute(sorgu, (datetime.now().date(),))
+        cekilen_kelime = islem.fetchone()
+        
+        if cekilen_kelime:
+            uiQuizEkrani.kelimeLabel.setText(cekilen_kelime[0])
+            soruSayac += 1
+            return        
+
+soruSayac=0   
+    
+    
+uiQuizEkrani.cevapBtn.clicked.connect(cevabi_gir)
 
 
 def kelime_ekleme():
