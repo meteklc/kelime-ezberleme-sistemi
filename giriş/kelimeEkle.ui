@@ -14,20 +14,7 @@
    <string>Kelime Ekleme</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QLabel" name="label_4">
-    <property name="geometry">
-     <rect>
-      <x>90</x>
-      <y>360</y>
-      <width>161</width>
-      <height>20</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Kelimenin Seviyesini Giriniz:</string>
-    </property>
-   </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>260</x>
@@ -54,46 +41,6 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="kelimeSeviyeBox">
-       <property name="sizeIncrement">
-        <size>
-         <width>3</width>
-         <height>3</height>
-        </size>
-       </property>
-       <item>
-        <property name="text">
-         <string>A1</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>A2</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>B1</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>B2</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>C1</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>C2</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item>
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="QPushButton" name="geriDonBtn">
@@ -113,7 +60,7 @@
      </item>
     </layout>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>0</x>
