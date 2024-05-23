@@ -1,8 +1,9 @@
-from ast import Index
+﻿from ast import Index
 import enum
 import sys 
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import *
+from PyQt5.uic import loadUi
 from kayitsf import *
 from anasayfa import *
 from anamenu import *
@@ -11,8 +12,15 @@ from kelimeEkle import *
 import csv, smtplib, ssl
 from quizEkrani import *
 from ayarlar import *
-from tkinter import filedialog
+import sys
+from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
+from PyQt5.QtGui import *
 
+import tkinter as tk
+from tkinter import filedialog
+from datetime import datetime
+from RaporEkran import *
 
 
 
@@ -48,6 +56,10 @@ uiQuizEkrani.setupUi(quizEkrani)
 ayarlarEkrani= QMainWindow()
 uiAyarlarEkrani= Ui_ayarlar()
 uiAyarlarEkrani.setupUi(ayarlarEkrani)
+
+RaporEkrani=QMainWindow()
+uiRaporEkrani=Ui_Rapor()
+uiRaporEkrani.setupUi(RaporEkrani)
 
 anaPencere.show()
 
@@ -181,8 +193,191 @@ def giris_yap():
 
 #METODLAR
 #--------------------------------------------------
+soruSayac=0
+kacSoru=10
+dogru_sayac = 0
+yanlis_sayac = 0
+
 def quize_basla():
+    global dogru_sayac, yanlis_sayac
     quizEkrani.show()
+    soru_getir()
+    
+def soru_getir():       
+    global soruSayac
+    kullaniciID=user.get_id()
+
+    islem.execute(f"""
+        SELECT TOP 1 k.kelime, k.kelimeCumle, k.kelimeGorsel 
+        FROM tblKelimeler k
+        INNER JOIN tblKelimeDetay kd ON k.kelimeID = kd.kelimeID
+        WHERE kd.kelimeSayac = 0 AND kd.kullaniciID = ?
+        ORDER BY NEWID();""", [kullaniciID])
+    
+    cekilen_veri = islem.fetchone()
+    
+    if cekilen_veri:
+        cekilen_kelime, cekilen_cumle, cekilen_gorsel = cekilen_veri
+        uiQuizEkrani.kelimeLabel.setText(cekilen_kelime)
+        uiQuizEkrani.cumleLabel.setText(cekilen_cumle)
+        if cekilen_gorsel:
+            pixmap = QPixmap(cekilen_gorsel)
+            uiQuizEkrani.gorselLabel.setPixmap(pixmap)
+        uiQuizEkrani.cevapLne.clear()
+        soruSayac += 1
+    else:
+        uiQuizEkrani.statusbar.showMessage("Yeterince ekli kelime yok!", 10000)
+    baglanti.commit()
+
+def cevabi_gir():
+    global dogru_sayac, yanlis_sayac
+
+    kullaniciID=user.get_id()
+    girilen_kelime = uiQuizEkrani.cevapLne.text()
+    mevcut_kelime = uiQuizEkrani.kelimeLabel.text()
+    
+
+    islem.execute("""
+    SELECT k.*
+    FROM tblKelimeler k
+    INNER JOIN tblKelimeDetay kd ON k.kelimeID = kd.kelimeID
+    WHERE k.kelime = ? AND k.kelimeTurkcesi = ? AND kd.kullaniciID = ?
+    """, (mevcut_kelime, girilen_kelime, kullaniciID))
+    kelimeDogruMu = islem.fetchone()
+    baglanti.commit()
+    
+    
+    if kelimeDogruMu:    
+        dogru_sayac += 1
+        islem.execute("""
+            UPDATE tblKelimeDetay
+            SET kelimeSayac = kelimeSayac + 1,
+                kelimeBilinmeTarih = ?
+            FROM tblKelimeDetay
+            INNER JOIN tblKelimeler ON tblKelimeDetay.kelimeID = tblKelimeler.kelimeID
+            WHERE tblKelimeler.kelimeTurkcesi = ?
+            AND tblKelimeDetay.kullaniciID = ?
+        """, (datetime.now().date(), girilen_kelime, kullaniciID))
+        
+        islem.execute("""
+            SELECT kelimeSayac
+            FROM tblKelimeDetay
+            INNER JOIN tblKelimeler ON tblKelimeDetay.kelimeID = tblKelimeler.kelimeID
+            WHERE tblKelimeler.kelimeTurkcesi = ?
+            AND tblKelimeDetay.kullaniciID = ?
+        """, (girilen_kelime, kullaniciID))
+        
+        kelimeSayac = islem.fetchone()[0]
+        baglanti.commit()
+
+        
+        if kelimeSayac == 6:
+            islem.execute("""
+            UPDATE tblKelimeDetay 
+            SET kelimeSayac = kelimeSayac + 1 
+            WHERE kelimeID = (SELECT kelimeID FROM tblKelimeler WHERE kelime = ?) 
+            AND kullaniciID = ?
+            """, (mevcut_kelime, kullaniciID))
+            baglanti.commit()
+        else:
+            islem.execute(f"SELECT kacSoru FROM tblKullanici WHERE kullaniciID = ?",(kullaniciID,))
+            kacSoru = islem.fetchone()[0]
+            if soruSayac < kacSoru:
+                soru_getir()
+            else:
+                sonraki_kelimeyi_getir()                   
+    else :
+        yanlis_sayac += 1
+        islem.execute("""
+        UPDATE tblKelimeDetay 
+        SET kelimeSayac = 0 
+        WHERE kelimeID = (
+            SELECT TOP 1 kelimeID 
+            FROM tblKelimeler 
+            WHERE kelime = ? 
+        ) 
+        AND kullaniciID = ?
+        """, (mevcut_kelime, kullaniciID))
+        
+        baglanti.commit()
+        soru_getir()
+    
+def sonraki_kelimeyi_getir():
+    
+    kullaniciID=user.get_id()
+    global soruSayac,dogru_sayac,yanlis_sayac
+    
+    sorgu_listesi = [
+    """
+    SELECT k.kelime, k.kelimeCumle, k.kelimeGorsel
+    FROM tblKelimeler k
+    INNER JOIN tblKelimeDetay kd ON k.kelimeID = kd.kelimeID
+    WHERE kd.kelimeSayac = 1 AND ? - kd.kelimeBilinmeTarih >= 1 AND kd.kullaniciID = ?
+    """,
+    """
+    SELECT k.kelime, k.kelimeCumle, k.kelimeGorsel
+    FROM tblKelimeler k
+    INNER JOIN tblKelimeDetay kd ON k.kelimeID = kd.kelimeID
+    WHERE kd.kelimeSayac = 2 AND ? - kd.kelimeBilinmeTarih >= 7 AND kd.kullaniciID = ?
+    """,
+    """
+    SELECT k.kelime, k.kelimeCumle, k.kelimeGorsel
+    FROM tblKelimeler k
+    INNER JOIN tblKelimeDetay kd ON k.kelimeID = kd.kelimeID
+    WHERE kd.kelimeSayac = 3 AND ? - kd.kelimeBilinmeTarih >= 30 AND kd.kullaniciID = ?
+    """,
+    """
+    SELECT k.kelime, k.kelimeCumle, k.kelimeGorsel
+    FROM tblKelimeler k
+    INNER JOIN tblKelimeDetay kd ON k.kelimeID = kd.kelimeID
+    WHERE kd.kelimeSayac = 4 AND ? - kd.kelimeBilinmeTarih >= 90 AND kd.kullaniciID = ?
+    """,
+    """
+    SELECT k.kelime, k.kelimeCumle, k.kelimeGorsel
+    FROM tblKelimeler k
+    INNER JOIN tblKelimeDetay kd ON k.kelimeID = kd.kelimeID
+    WHERE kd.kelimeSayac = 5 AND ? - kd.kelimeBilinmeTarih >= 180 AND kd.kullaniciID = ?
+    """,
+    """
+    SELECT k.kelime, k.kelimeCumle, k.kelimeGorsel
+    FROM tblKelimeler k
+    INNER JOIN tblKelimeDetay kd ON k.kelimeID = kd.kelimeID
+    WHERE kd.kelimeSayac = 6 AND ? - kd.kelimeBilinmeTarih >= 360 AND kd.kullaniciID = ?
+    """]
+    bulunan_kelime = False
+    
+    for sorgu in sorgu_listesi:
+        islem.execute(sorgu, (datetime.now().date(), kullaniciID))
+        cekilen_veriler = islem.fetchall()
+        
+        if cekilen_veriler:
+            bulunan_kelime = True
+            for cekilen_veri in cekilen_veriler:
+                cekilen_kelime, cekilen_cumle, cekilen_gorsel = cekilen_veri
+                uiQuizEkrani.kelimeLabel.setText(cekilen_kelime)
+                uiQuizEkrani.cumleLabel.setText(cekilen_cumle)
+                if cekilen_gorsel:
+                    pixmap = QPixmap(cekilen_gorsel)
+                    uiQuizEkrani.gorselLabel.setPixmap(pixmap)
+                uiQuizEkrani.cevapLne.clear()
+                soruSayac += 1
+            return        
+    if not bulunan_kelime:
+        RaporEkrani.show()
+        quizEkrani.close()
+            
+        global dogru_sayac,yanlis_sayac
+        uiRaporEkrani.dogruLabel.setText(str(dogru_sayac))
+        uiRaporEkrani.yanlisLabel.setText(str(yanlis_sayac))
+
+        uiRaporEkrani.pushButton.clicked.connect(RaporEkrani.close)            
+        dogru_sayac = 0
+        yanlis_sayac = 0
+soruSayac=0   
+    
+    
+uiQuizEkrani.cevapBtn.clicked.connect(cevabi_gir)
+
 
 
 file_path = None
@@ -281,7 +476,10 @@ def ayarlar():
     def kac_soru():
         kullaniciID=int(user.get_id())
         kacSoru=int(uiAyarlarEkrani.kacSoruBox.text())
+        print(kacSoru)
+        print(kullaniciID)
         try:
+            print(f"update tblKullanici set kacSoru='{kacSoru}' where kullaniciID='{kullaniciID}'")
             islem.execute(f"update tblKullanici set kacSoru='{kacSoru}' where kullaniciID='{kullaniciID}'")
             baglanti.commit()
             uiAyarlarEkrani.statusbar.showMessage("Kaydedildi !",10000)
