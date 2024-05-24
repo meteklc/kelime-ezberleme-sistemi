@@ -15,31 +15,45 @@ class Ui_SifremiUnuttum(object):
     def setupUi(self, SifremiUnuttum):
         SifremiUnuttum.setObjectName("SifremiUnuttum")
         SifremiUnuttum.resize(811, 600)
+        SifremiUnuttum.setStyleSheet("background-color: #2980b9;")
+        
         self.centralwidget = QtWidgets.QWidget(SifremiUnuttum)
         self.centralwidget.setObjectName("centralwidget")
+        
         self.label = QtWidgets.QLabel(self.centralwidget)
         self.label.setGeometry(QtCore.QRect(140, 140, 111, 16))
         self.label.setObjectName("label")
+        self.label.setStyleSheet("color: #ecf0f1;")
+        
         self.layoutWidget = QtWidgets.QWidget(self.centralwidget)
         self.layoutWidget.setGeometry(QtCore.QRect(250, 140, 139, 61))
         self.layoutWidget.setObjectName("layoutWidget")
+        
         self.verticalLayout = QtWidgets.QVBoxLayout(self.layoutWidget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
+        
         self.epostaLne = QtWidgets.QLineEdit(self.layoutWidget)
         self.epostaLne.setObjectName("epostaLne")
         self.verticalLayout.addWidget(self.epostaLne)
+        
         self.kodYollaBtn = QtWidgets.QPushButton(self.layoutWidget)
         self.kodYollaBtn.setObjectName("kodYollaBtn")
+        self.kodYollaBtn.setStyleSheet("background-color: #e74c3c; color: #ecf0f1; padding: 5px;")
         self.verticalLayout.addWidget(self.kodYollaBtn)
+        
         self.geriDonBtn = QtWidgets.QPushButton(self.centralwidget)
         self.geriDonBtn.setGeometry(QtCore.QRect(150, 170, 93, 28))
         self.geriDonBtn.setObjectName("geriDonBtn")
+        self.geriDonBtn.setStyleSheet("background-color: #e74c3c; color: #ecf0f1; padding: 5px;")
+        
         SifremiUnuttum.setCentralWidget(self.centralwidget)
+        
         self.menubar = QtWidgets.QMenuBar(SifremiUnuttum)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 811, 26))
         self.menubar.setObjectName("menubar")
         SifremiUnuttum.setMenuBar(self.menubar)
+        
         self.statusbar = QtWidgets.QStatusBar(SifremiUnuttum)
         self.statusbar.setObjectName("statusbar")
         SifremiUnuttum.setStatusBar(self.statusbar)
@@ -53,3 +67,5 @@ class Ui_SifremiUnuttum(object):
         self.label.setText(_translate("SifremiUnuttum", "E-Postanızı Giriniz:"))
         self.kodYollaBtn.setText(_translate("SifremiUnuttum", "Tamam"))
         self.geriDonBtn.setText(_translate("SifremiUnuttum", "Geri Dön"))
+
+

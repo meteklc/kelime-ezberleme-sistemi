@@ -15,40 +15,61 @@ class Ui_Rapor(object):
     def setupUi(self, Rapor):
         Rapor.setObjectName("Rapor")
         Rapor.resize(800, 600)
+        Rapor.setStyleSheet("background-color: #2ecc71;")
+        
         self.centralwidget = QtWidgets.QWidget(Rapor)
         self.centralwidget.setObjectName("centralwidget")
+        
         self.pushButton = QtWidgets.QPushButton(self.centralwidget)
         self.pushButton.setGeometry(QtCore.QRect(350, 260, 93, 28))
         self.pushButton.setObjectName("pushButton")
+        self.pushButton.setStyleSheet("background-color: #e74c3c; color: #ecf0f1; padding: 5px;")
+        
         self.widget = QtWidgets.QWidget(self.centralwidget)
         self.widget.setGeometry(QtCore.QRect(320, 160, 144, 43))
         self.widget.setObjectName("widget")
+        
         self.horizontalLayout = QtWidgets.QHBoxLayout(self.widget)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setObjectName("horizontalLayout")
+        
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
+        
         self.label = QtWidgets.QLabel(self.widget)
         self.label.setObjectName("label")
+        self.label.setStyleSheet("color: #ecf0f1;")
         self.verticalLayout.addWidget(self.label)
+        
         self.label_2 = QtWidgets.QLabel(self.widget)
         self.label_2.setObjectName("label_2")
+        self.label_2.setStyleSheet("color: #ecf0f1;")
         self.verticalLayout.addWidget(self.label_2)
+        
         self.horizontalLayout.addLayout(self.verticalLayout)
+        
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setObjectName("verticalLayout_2")
+        
         self.dogruLabel = QtWidgets.QLabel(self.widget)
         self.dogruLabel.setObjectName("dogruLabel")
+        self.dogruLabel.setStyleSheet("color: #ecf0f1;")
         self.verticalLayout_2.addWidget(self.dogruLabel)
+        
         self.yanlisLabel = QtWidgets.QLabel(self.widget)
         self.yanlisLabel.setObjectName("yanlisLabel")
+        self.yanlisLabel.setStyleSheet("color: #ecf0f1;")
         self.verticalLayout_2.addWidget(self.yanlisLabel)
+        
         self.horizontalLayout.addLayout(self.verticalLayout_2)
+        
         Rapor.setCentralWidget(self.centralwidget)
+        
         self.menubar = QtWidgets.QMenuBar(Rapor)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 26))
         self.menubar.setObjectName("menubar")
         Rapor.setMenuBar(self.menubar)
+        
         self.statusbar = QtWidgets.QStatusBar(Rapor)
         self.statusbar.setObjectName("statusbar")
         Rapor.setStatusBar(self.statusbar)

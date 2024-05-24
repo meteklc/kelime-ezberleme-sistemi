@@ -1,5 +1,4 @@
 ﻿from ast import Index
-import enum
 import sys 
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import *
@@ -286,7 +285,7 @@ def cevabi_gir():
                 soru_getir()
             else:
                 sonraki_kelimeyi_getir()                   
-    else :
+    else :        
         yanlis_sayac += 1
         islem.execute("""
         UPDATE tblKelimeDetay 
@@ -297,10 +296,15 @@ def cevabi_gir():
             WHERE kelime = ? 
         ) 
         AND kullaniciID = ?
-        """, (mevcut_kelime, kullaniciID))
-        
+        """, (mevcut_kelime, kullaniciID))        
+        islem.execute(f"SELECT kacSoru FROM tblKullanici WHERE kullaniciID = ?",(kullaniciID,))
+        kacSoru = islem.fetchone()[0]
+        if soruSayac < kacSoru:
+            soru_getir()
+        else:
+            sonraki_kelimeyi_getir()                
         baglanti.commit()
-        soru_getir()
+        
     
 def sonraki_kelimeyi_getir():
     
@@ -409,17 +413,6 @@ def kelime_ekleme():
 
                 if kelimeMevcutMu is None:
                     try:
-                        ekle = "insert into dbo.tblKelimeler(kelime,kelimeTurkcesi,kelimeCumle,kelimeGorsel) values(?,?,?,?)"
-                        islem.execute(ekle, (kelime, kelimeTurkcesi, kelimeCumle, gorsel))
-                        baglanti.commit()
-                        uikelimeEklemeEkrani.kelimeLne.clear()
-                        uikelimeEklemeEkrani.kelimeTrLne.clear()
-                        uikelimeEklemeEkrani.kelimeCumleTxt.clear()
-                        uikelimeEklemeEkrani.statusbar.showMessage("Kelime Eklendi !", 10000)
-                    except Exception as e:
-                        print("Hata:", e)
-                        uikelimeEklemeEkrani.statusbar.showMessage("Kelime Eklenemedi.", 10000)
-                    try:
 
                         ekle = "insert into dbo.tblKelimeler(kelime,kelimeTurkcesi,kelimeCumle,kelimeGorsel) values(?,?,?,?)"
                         islem.execute(ekle, (kelime, kelimeTurkcesi, kelimeCumle, gorsel))
@@ -451,9 +444,6 @@ def kelime_ekleme():
                 uikelimeEklemeEkrani.statusbar.showMessage("Lutfen Tum Alanlari Doldurun!", 10000)
         else:
             uikelimeEklemeEkrani.statusbar.showMessage("Lutfen Gorsel Seciniz!", 10000)
-
-    def gorsel_ekleyiniz():
-        uikelimeEklemeEkrani.statusbar.showMessage("Lutfen Gorsel Ekleyiniz!", 10000)
 
     def file_path_bosalt():
         global file_path
